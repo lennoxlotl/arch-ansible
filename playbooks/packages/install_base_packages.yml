@@ -136,3 +136,28 @@
   kewlfft.aur.aur:
     use: paru
     name: spotify
+
+- name: Install docker
+  kewlfft.aur.aur:
+    use: paru
+    name: docker
+
+- name: Create "docker" group
+  group:
+    name: docker
+    state: present
+
+- name: Add user to "docker" group
+  user:
+    name: "{{ remote_user }}"
+    group: "docker"
+    append: yes
+
+- name: Install kubernetes (tools)
+  kewlfft.aur.aur:
+    use: paru
+    name:
+      - kubectl
+      - skaffold-bin
+      - protobuf
+      - k9s
