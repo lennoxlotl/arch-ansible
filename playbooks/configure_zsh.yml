@@ -1,0 +1,60 @@
+- name: Download pokemon-colorscripts (temp)
+  git:
+    repo: "https://gitlab.com/phoneybadger/pokemon-colorscripts.git"
+    dest: /tmp/pokemon-colorscripts
+
+- name: Install pokemon-colorscripts
+  become: true
+  # For some reason we have to be in the directory to install it, interesting approach
+  shell: |
+    cd /tmp/pokemon-colorscripts
+    ./install.sh
+
+- name: Check if oh my zsh exists
+  stat:
+    path: ~/.oh-my-zsh
+  register: omz_installed
+
+- name: Install oh my zsh
+  shell: sh -c "$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)"
+  when: omz_installed.stat.exists == False
+
+- name: Check if zsh-autosuggestions exists
+  stat:
+    path: ~/.oh-my-zsh/plugins/zsh-autosuggestions
+  register: zsh_autosuggestions
+
+- name: Install zsh-autosuggestions
+  git:
+    repo: "https://github.com/zsh-users/zsh-autosuggestions"
+    dest: ~/.oh-my-zsh/plugins/zsh-autosuggestions
+  when: zsh_autosuggestions.stat.exists == False
+
+- name: Check if zsh-syntax-highlighting exists
+  stat:
+    path: ~/.oh-my-zsh/plugins/zsh-syntax-highlighting
+  register: zsh_syntax_highlighting
+
+- name: Install zsh-syntax-highlighting
+  git:
+    repo: "https://github.com/zsh-users/zsh-syntax-highlighting"
+    dest: ~/.oh-my-zsh/plugins/zsh-syntax-highlighting
+  when: zsh_syntax_highlighting.stat.exists == False
+
+# We should maybe backup the old zsh file, for me personally this is not needed
+- name: Delete old zsh dotfile (if present)
+  file:
+    path: ~/.zshrc
+    state: absent
+
+- name: Install zsh dotfile
+  copy:
+    src: dotfiles/.zshrc
+    dest: ~/.zshrc
+
+- name: Use zsh as default shell
+  expect:
+    command: "chsh -s /usr/bin/zsh"
+    responses:
+      (?i)password: "{{ user_password }}"
+    creates: ".shell_is_zsh"

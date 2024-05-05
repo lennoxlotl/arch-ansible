@@ -1,0 +1,30 @@
+- name: Copy wallpapers
+  copy:
+    src: dotfiles/Wallpapers
+    dest: ~/Pictures
+
+- name: Copy .config
+  copy:
+    src: dotfiles/.config
+    dest: ~/
+
+- name: Install Jetbrains Mono Nerdfont
+  shell: |
+    mkdir -p ~/.fonts
+    mkdir -p ~/.fonts/JetBrainsMonoNerd
+    cd ~/.fonts/JetBrainsMonoNerd && curl -fLO https://github.com/ryanoasis/nerd-fonts/raw/HEAD/patched-fonts/JetBrainsMono/Ligatures/Regular/JetBrainsMonoNerdFont-Regular.ttf
+
+- name: Clone wpaperd
+  become: false
+  git:
+    repo: https://github.com/danyspin97/wpaperd
+    dest: /tmp/wpaperd
+
+- name: Build wpaperd
+  become: false
+  # We need to make sure the cargo env is loaded in this unique case
+  shell: |
+    . "$HOME/.cargo/env"
+    cd /tmp/wpaperd
+    cargo build --release
+    cargo install --path="./daemon" && cargo install --path="./cli"

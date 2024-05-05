@@ -1,0 +1,192 @@
+- name: Update pacman packages
+  pacman:
+    state: latest
+    update_cache: yes
+    upgrade: yes
+
+- name: Install adw-gtk3-theme (rpm)
+  dnf:
+    name: adw-gtk3-theme
+    state: latest
+
+- name: Install gnome tweaks
+  dnf:
+    name: gnome-tweaks
+    state: latest
+
+- name: Install chromium browser
+  dnf:
+    name: chromium
+    state: latest
+
+- name: Import visual studio code repository keys
+  rpm_key:
+    key: https://packages.microsoft.com/keys/microsoft.asc
+    state: present
+
+- name: Install visual studio code repository
+  yum_repository:
+    name: vscode
+    description: Visual Studio Code Repository
+    baseurl: https://packages.microsoft.com/yumrepos/vscode
+    enabled: 1
+    gpgcheck: 1
+    gpgkey: https://packages.microsoft.com/keys/microsoft.asc
+
+- name: Install visual studio code
+  dnf:
+    name: code
+    state: latest
+
+- name: Enable lazygit copr
+  community.general.copr:
+    state: enabled
+    host: copr.fedorainfracloud.org
+    name: atim/lazygit
+
+- name: Install lazygit
+  dnf:
+    name: lazygit
+    state: latest
+
+- name: Enable hyprland copr
+  community.general.copr:
+    state: enabled
+    host: copr.fedorainfracloud.org
+    name: solopasha/hyprland
+
+- name: Enable SwayNotificationCenter copr
+  community.general.copr:
+    state: enabled
+    host: copr.fedorainfracloud.org
+    name: erikreider/SwayNotificationCenter
+
+- name: Install hyprland
+  dnf:
+    name:
+      - hyprland-git
+      - ags
+      - rofi-wayland
+      - playerctl
+      - openssl
+      - network-manager-applet
+      - kitty
+      - xdg-utils
+      - xdg-user-dirs
+      - python3-requests
+      - python3-pip
+      - curl
+      - SwayNotificationCenter
+      - swayidle
+      - wl-clipboard
+      - wlogout
+      - yad
+      - swappy
+      - slurp
+      - qt6ct
+      - qt5ct
+      - qt6-qtsvg
+      - pamixer
+      - pavucontrol
+      - pipewire-alsa
+    state: latest
+
+- name: Install desktop portals
+  dnf:
+    name:
+      - xdg-desktop-portal-hyprland
+      - xdg-desktop-portal-gtk
+    state: latest
+
+- name: Install zsh
+  dnf:
+    name:
+      - zsh
+      - util-linux
+    state: latest
+
+- name: Enable starship copr
+  community.general.copr:
+    state: enabled
+    host: copr.fedorainfracloud.org
+    name: atim/starship
+
+- name: Install starship
+  dnf:
+    name: starship
+    state: latest
+
+- name: Install nvm
+  become: false
+  shell: wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+
+- name: Check if cargo is installed
+  become: false
+  shell: command -v cargo
+  register: cargo_exists
+  ignore_errors: yes
+
+- name: Download Rust installer
+  become: false
+  when: cargo_exists is failed
+  get_url:
+    url: https://sh.rustup.rs
+    dest: /tmp/sh.rustup.rs
+    mode: "0755"
+    force: "yes"
+  tags:
+    - rust
+
+- name: Install rust
+  become: false
+  when: cargo_exists is failed
+  shell: /tmp/sh.rustup.rs -y
+  tags:
+    - rust
+
+- name: Check if bun is installed
+  become: false
+  shell: command -v bun
+  register: bun_exists
+  ignore_errors: true
+
+- name: Install bun
+  become: false
+  shell: curl -fsSL https://bun.sh/install | bash
+  tags:
+    - bun
+
+- name: Install development tools
+  dnf: 
+    name:
+      - "@development-tools"
+      - openssl-devel
+      - gcc
+      - g++
+      - wayland-devel
+      - egl-wayland-devel
+      - libxkbcommon-devel
+      - mesa-libEGL-devel
+    state: latest
+
+- name: Download jetbrains toolbox
+  become: false
+  get_url:
+    url: https://download.jetbrains.com/toolbox/jetbrains-toolbox-2.2.3.20090.tar.gz
+    dest: /tmp/jetbrains-toolbox.tar.gz
+
+- name: Extract jetbrains toolbox
+  become: false
+  unarchive:
+    src: /tmp/jetbrains-toolbox.tar.gz
+    dest: /tmp
+    remote_src: yes
+
+- name: Install jetbrains toolbox
+  become: false
+  shell: /tmp/jetbrains-toolbox-*/jetbrains-toolbox
+
+- name: Install flameshot
+  dnf:
+    name: flameshot
+    state: latest
