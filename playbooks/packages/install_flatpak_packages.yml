@@ -1,20 +1,13 @@
 - name: Install flatpak
-  dnf:
+  kewlfft.aur.aur:
+    use: paru
     name: flatpak
-    state: latest
 
 - name: Add flathub beta remote
   community.general.flatpak_remote:
     name: flathub-beta
     state: present
     flatpakrepo_url: https://flathub.org/beta-repo/flathub-beta.flatpakrepo
-
-- name: Install adw-gtk3-theme (flatpak)
-  community.general.flatpak:
-    name:
-      - org.gtk.Gtk3theme.adw-gtk3
-      - org.gtk.Gtk3theme.adw-gtk3-dark
-    state: present
 
 - name: Install vesktop
   community.general.flatpak:

@@ -1,71 +1,50 @@
+- name: Enabling multilib
+  become: true
+  blockinfile:
+    path: /etc/pacman.conf
+    block: |
+        [multilib]
+        Include = /etc/pacman.d/mirrorlist
+    state: present
+
 - name: Update pacman packages
+  become: true
   pacman:
     state: latest
     update_cache: yes
     upgrade: yes
 
-- name: Install adw-gtk3-theme (rpm)
-  dnf:
-    name: adw-gtk3-theme
-    state: latest
+- name: Install adw-gtk3 theme
+  kewlfft.aur.aur:
+    use: paru
+    name: adw-gtk3
 
-- name: Install gnome tweaks
-  dnf:
+- name: Install gnome-tweaks
+  kewlfft.aur.aur:
+    use: paru
     name: gnome-tweaks
-    state: latest
 
-- name: Install chromium browser
-  dnf:
-    name: chromium
-    state: latest
-
-- name: Import visual studio code repository keys
-  rpm_key:
-    key: https://packages.microsoft.com/keys/microsoft.asc
-    state: present
-
-- name: Install visual studio code repository
-  yum_repository:
-    name: vscode
-    description: Visual Studio Code Repository
-    baseurl: https://packages.microsoft.com/yumrepos/vscode
-    enabled: 1
-    gpgcheck: 1
-    gpgkey: https://packages.microsoft.com/keys/microsoft.asc
+- name: Install firefox
+  kewlfft.aur.aur:
+    use: paru
+    name: firefox
 
 - name: Install visual studio code
-  dnf:
-    name: code
-    state: latest
-
-- name: Enable lazygit copr
-  community.general.copr:
-    state: enabled
-    host: copr.fedorainfracloud.org
-    name: atim/lazygit
-
+  kewlfft.aur.aur:
+    use: paru
+    name: visual-studio-code-bin
+  
 - name: Install lazygit
-  dnf:
+  kewlfft.aur.aur:
+    use: paru
     name: lazygit
-    state: latest
 
-- name: Enable hyprland copr
-  community.general.copr:
-    state: enabled
-    host: copr.fedorainfracloud.org
-    name: solopasha/hyprland
-
-- name: Enable SwayNotificationCenter copr
-  community.general.copr:
-    state: enabled
-    host: copr.fedorainfracloud.org
-    name: erikreider/SwayNotificationCenter
-
-- name: Install hyprland
-  dnf:
+- name: Install hyprland & dependencies
+  kewlfft.aur.aur:
+    use: paru
     name:
       - hyprland-git
-      - ags
+      - aylurs-gtk-shell
       - rofi-wayland
       - playerctl
       - openssl
@@ -73,10 +52,10 @@
       - kitty
       - xdg-utils
       - xdg-user-dirs
-      - python3-requests
-      - python3-pip
+      - python-requests
+      - python-pip
       - curl
-      - SwayNotificationCenter
+      - swaync
       - swayidle
       - wl-clipboard
       - wlogout
@@ -85,108 +64,75 @@
       - slurp
       - qt6ct
       - qt5ct
-      - qt6-qtsvg
+      - qt6-svg
       - pamixer
       - pavucontrol
       - pipewire-alsa
-    state: latest
-
-- name: Install desktop portals
-  dnf:
-    name:
       - xdg-desktop-portal-hyprland
-      - xdg-desktop-portal-gtk
-    state: latest
+      - flameshoto
+
+- name: Install blackbox
+  kewlfft.aur.aur:
+    use: paru
+    name:
+      - blackbox-terminal
+      - nautilus-open-in-blackbox
 
 - name: Install zsh
-  dnf:
-    name:
+  kewlfft.aur.aur:
+    use: paru
+    name: 
       - zsh
       - util-linux
-    state: latest
-
-- name: Enable starship copr
-  community.general.copr:
-    state: enabled
-    host: copr.fedorainfracloud.org
-    name: atim/starship
+      - krabby-bin
+      - ttf-jetbrains-mono-nerd
 
 - name: Install starship
-  dnf:
+  kewlfft.aur.aur:
+    use: paru
     name: starship
-    state: latest
+
+- name: Check if nvm is installed
+  shell: command -v nvm 
+  register: nvm_exists
+  ignore_errors: true
 
 - name: Install nvm
-  become: false
+  when: nvm_exists is failed
   shell: wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
 
-- name: Check if cargo is installed
-  become: false
-  shell: command -v cargo
-  register: cargo_exists
-  ignore_errors: yes
-
-- name: Download Rust installer
-  become: false
-  when: cargo_exists is failed
-  get_url:
-    url: https://sh.rustup.rs
-    dest: /tmp/sh.rustup.rs
-    mode: "0755"
-    force: "yes"
-  tags:
-    - rust
-
 - name: Install rust
-  become: false
-  when: cargo_exists is failed
-  shell: /tmp/sh.rustup.rs -y
-  tags:
-    - rust
+  kewlfft.aur.aur:
+    use: paru
+    name: rustup
 
 - name: Check if bun is installed
-  become: false
   shell: command -v bun
   register: bun_exists
   ignore_errors: true
 
 - name: Install bun
-  become: false
+  when: bun_exists is failed
   shell: curl -fsSL https://bun.sh/install | bash
   tags:
     - bun
 
-- name: Install development tools
-  dnf: 
-    name:
-      - "@development-tools"
-      - openssl-devel
-      - gcc
-      - g++
-      - wayland-devel
-      - egl-wayland-devel
-      - libxkbcommon-devel
-      - mesa-libEGL-devel
-    state: latest
-
-- name: Download jetbrains toolbox
-  become: false
-  get_url:
-    url: https://download.jetbrains.com/toolbox/jetbrains-toolbox-2.2.3.20090.tar.gz
-    dest: /tmp/jetbrains-toolbox.tar.gz
-
-- name: Extract jetbrains toolbox
-  become: false
-  unarchive:
-    src: /tmp/jetbrains-toolbox.tar.gz
-    dest: /tmp
-    remote_src: yes
+- name: Install build tools
+  kewlfft.aur.aur:
+    use: paru
+    name: base-devel
 
 - name: Install jetbrains toolbox
-  become: false
-  shell: /tmp/jetbrains-toolbox-*/jetbrains-toolbox
+  kewlfft.aur.aur:
+    use: paru
+    name: jetbrains-toolbox
 
-- name: Install flameshot
-  dnf:
-    name: flameshot
-    state: latest
+- name: Install steam
+  kewlfft.aur.aur:
+    use: paru
+    name: steam
+
+- name: Install spotify
+  kewlfft.aur.aur:
+    use: paru
+    name: spotify

@@ -1,15 +1,3 @@
-- name: Download pokemon-colorscripts (temp)
-  git:
-    repo: "https://gitlab.com/phoneybadger/pokemon-colorscripts.git"
-    dest: /tmp/pokemon-colorscripts
-
-- name: Install pokemon-colorscripts
-  become: true
-  # For some reason we have to be in the directory to install it, interesting approach
-  shell: |
-    cd /tmp/pokemon-colorscripts
-    ./install.sh
-
 - name: Check if oh my zsh exists
   stat:
     path: ~/.oh-my-zsh

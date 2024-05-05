@@ -1,0 +1,19 @@
+format = '$username[@](blue bold)$hostname [»](gray bold) '
+right_format = '$directory$all'
+
+[directory]
+truncation_length = 1000
+truncate_to_repo = false
+
+[hostname]
+ssh_only = false
+style = "blue bold"
+format = "[$ssh_symbol$hostname]($style)"
+
+[username]
+show_always = true
+format = "[$user]($style)"
+style_user = "blue bold"
+
+[character]
+format = ""

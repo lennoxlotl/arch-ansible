@@ -9,14 +9,14 @@
   tasks:
     # Install all required packages and libraries first
     - name: Install and update packages
-      import_tasks: "playbooks/new/packages/install_base_packages.yml"
-    #- name: Install and update flatpak packages
-    #  become: true
-    #  import_tasks: "playbooks/packages/install_flatpak_packages.yml"
+      import_tasks: "playbooks/packages/install_base_packages.yml"
+    - name: Install and update flatpak packages
+      become: true
+      import_tasks: "playbooks/packages/install_flatpak_packages.yml"
     # Configure everything next
-    #- name: Configure gsettings
-    #  import_tasks: "playbooks/configure_gsettings.yml"
-    #- name: Configure zsh
-    #  import_tasks: "playbooks/configure_zsh.yml"
-    #- name: Configure hyprland
-    #  import_tasks: "playbooks/configure_hyprland.yml"
+    - name: Configure gsettings
+      import_tasks: "playbooks/configure_gsettings.yml"
+    - name: Configure zsh
+      import_tasks: "playbooks/configure_zsh.yml"
+    - name: Configure hyprland
+      import_tasks: "playbooks/configure_hyprland.yml"
