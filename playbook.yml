@@ -1,5 +1,5 @@
 ---
-- name: Fedora
+- name: Arch 
   hosts: localhost
   connection: local
   vars_prompt:

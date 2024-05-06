@@ -7,7 +7,7 @@ ZSH_THEME="agnoster"
 
 plugins=( 
     git
-    dnf
+    archlinux 
     zsh-autosuggestions
     zsh-syntax-highlighting
 )
