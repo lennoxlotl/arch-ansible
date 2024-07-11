@@ -1,0 +1,81 @@
+configuration {
+    modes: [ combi ];
+    combi-modes: [window, drun, run];
+}
+
+* {
+    font: "SF Pro Display Medium 11";
+}
+
+inputbar {
+    children: [icon-prompt, entry];
+}
+
+window {
+    background-color: #1B1A1B;
+    padding: 10px;
+    border-radius: 15px;
+    border: 1px;
+    border-color: #4F4F50;
+}
+
+icon-prompt {
+   expand: false;
+   size: 24;
+}
+
+entry {
+    placeholder: "Search...";
+    text-color: white;
+    padding: 14px 0px 15px 0px;
+    cursor-color: #6c99bb;
+    font: "SF Pro Display Bold 13";
+}
+
+element {
+  orientation: horizontal;
+  children: [ element-icon, element-text ];
+  spacing: 10px;
+  border-radius: 10px;
+  padding: 13px;
+  background-color: white;
+  margin: 1px;
+}
+
+listview {
+    border: 1px 0 0 0;
+    padding: 12px 0 0 0;
+    border-color: #313132;
+    chilren: [ element ];
+    scrollbar: false;
+}
+
+element normal.normal, element alternate.normal, button {
+  background-color: transparent;
+}
+
+element selected.normal {
+  background-color: #cc6666;
+  highlight: None;
+}
+
+element-text {
+    color: white;
+    text-style: "Bold";
+    vertical-align: 0.5;
+}
+
+element-text .selected {
+    color: white;
+}
+
+element-icon {
+  size: 1em;
+  padding: 4px;
+  border-radius: 5px;
+}
+
+element-icon .selected {
+    background-color: white;
+    padding: 2px;
+}
