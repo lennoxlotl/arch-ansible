@@ -127,6 +127,11 @@
     use: paru
     name: jetbrains-toolbox
 
+- name: Install zed
+  kewlfft.aur.aur:
+    use: paru
+    name: zed-preview-bin
+
 - name: Install steam
   kewlfft.aur.aur:
     use: paru
